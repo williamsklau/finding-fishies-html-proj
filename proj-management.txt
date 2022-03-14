@@ -1,0 +1,31 @@
+Sprint A: Create game
+1. Create a canvas obj & a fish obj
+2. Create backend grid system
+3. Have the fish randomly move & add more fishes
+4. What to do if fishes overlap as user taps on it??? Figure this out
+    Solution:
+    generate endpoint for fishes. set new endpoint when reached.
+    if collision detected, set rotate endpoint left 
+5. Create feeding & scoring system
+Optional: Set time delay between each feed
+
+Sprint B: Create GUI
+1. Create in-game menu (save state, exit, start new game, etc)
+2. Create begin and exit function
+3. Create user login function
+4. Create start menu
+
+
+
+DATA STRUCTURE OUTLINE:
+
+Objects:
+	class fish 
+				class pose(direction, position, speed), 
+				endpoint, 
+				static speed,
+				bool fed?
+
+	int foodcount
+
+	int score
