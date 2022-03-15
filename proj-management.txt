@@ -19,6 +19,7 @@ Sprint B: Create GUI
 
 DATA STRUCTURE OUTLINE:
 
+<<<<<<< Updated upstream
 Objects:
 	class fish 
 				class pose(direction, position, speed), 
@@ -29,3 +30,20 @@ Objects:
 	int foodcount
 
 	int score
+=======
+vector contain objects of the fishes
+		class obj: 
+			class pose(direction, position, speed), 
+			endpoint, 
+			static speed,
+			bool fed?
+
+int foodcount
+
+int score
+
+
+FUNCTIONS:
+
+gamePause()
+>>>>>>> Stashed changes
