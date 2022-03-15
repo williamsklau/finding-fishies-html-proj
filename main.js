@@ -14,15 +14,18 @@ function startGame(){
 		constructor(x,y,angle){
 			this.width = 100;
 			this.height = 10;
-			this.velocity_x = 0;
-			this.velocity_y = 0;
-			this.current_x = x;
-			this.current_y = y;
+			this.velocity = {x:0.01,y:0.01};
+			this.current = {x_pos:x, y_pos:y};
 			this.set_angle = -angle;
 			this.curr_angle = 0;
 			this.state = 0; //0 is unfed, 1 is fed 
 			this.temp_state = 0;
+			this.target_pos = { x:Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x, y:Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y};
+			ctx.fillRect(this.target_pos.x,this.target_pos.y,50,50);
 			console.log("fish here created");
+			console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
+			console.log(this.current.x,this.current.y);
+			console.log(this.target_pos.x,this.target_pos.y);
 		}
 		
 		draw(){
@@ -32,27 +35,38 @@ function startGame(){
 			if(this.set_angle!=this.curr_angle)
 			{
 				ctx.save();
-				ctx.translate(this.current_x,this.current_y);
+				ctx.translate(this.current.x_pos,this.current.y_pos);
 				ctx.rotate(this.set_angle);
-				ctx.translate(-this.current_x,-this.current_y);
+				ctx.translate(-this.current.x_pos,-this.current.y_pos);
 				
 				this.curr_angle = this.set_angle;
 				console.log(this.curr_angle*180/Math.PI);
 			}
-			ctx.fillRect(this.current_x-this.width/2,this.current_y-this.height/2,this.width,this.height);
+			ctx.fillRect(this.current.x_pos-this.width/2,this.current.y_pos-this.height/2,this.width,this.height);
 			//console.log(this.current_x,this.current_y)
 		}
 	
 		upate(){
-			this.current_x = this.current_x + this.velocity_x;
-			this.current_y = this.current_y + this.velocity_y;
+			if(this.current.x_pos!=this.target_pos.x||this.current.y_pos!=this.target_pos.y){
+				this.current.x_pos = this.current.x_pos + this.velocity.x*(this.target_pos.x-this.current.x_pos);
+				this.current.y_pos = this.current.y_pos + this.velocity.y*(this.target_pos.y-this.current.y_pos);
+				// console.log(this.current.x_pos - this.target_pos.x);
+				// console.log(this.current.y_pos - this.target_pos.y);
+			}
+			if((this.current.x_pos-this.target_pos.x)<10&&(this.current.x_pos-this.target_pos.x)>-10){
+				this.target_pos.x = Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x;
+			}
+			if((this.current.y_pos-this.target_pos.y)<10&&(this.current.y_pos-this.target_pos.y)>-10){
+				this.target_pos.y = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
+			}
+			//if(this.current_x!=this.target_pos.x)
 			//console.log(this.curr_angle);
 		}
 	
 	}
 	//const myFish = new fish(100,100,0);
 	let Fishs = []
-	let Totol_Fish = 5 
+	let Totol_Fish = 10 
 	
 	function animate(){
 		ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -63,6 +77,7 @@ function startGame(){
 			Fishs[i].draw();
 			//console.log(Fishs[i].angle);
 		}
+
 		//console.log(canvas.width,canvas.height);
 	}
 	var test;
