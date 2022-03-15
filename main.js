@@ -1,18 +1,12 @@
 function startGame(){
-	var canvas = document.getElementById('background');
-	var ctx = canvas.getContext('2d');
-	var img = document.createElement('img');
-	img.src = "fish.png";
-	var test;
-	// to rotate fish, use img.rotate(angleInRadians) 
-	// https://stackoverflow.com/questions/3793397/html5-canvas-drawimage-with-at-an-angle
-	ctx.drawImage(img, 100, 100, 840, 230);
+	fishTest.draw();
 }
 
 var level = 4;
 var foodcount = level;
-var clickX = 0;
+var clickX = 1;
 var clickY = 0;
+console.log('click coordinate initiated');
 let fishList = [];
 
 class fish {
@@ -34,7 +28,7 @@ class fish {
 				foodcount--;
 				clickY = null;
 				clickX = null;
-
+				console.log('fish fed!');
 			}
 			else
 				console.log('no fish here');
@@ -42,15 +36,26 @@ class fish {
 			console.log('clickX=' + clickX + ' clickY=' + clickY + 
 						' this.x=' + this.x + ' this.y=' + this.y);
 	}
+	draw(){
+		var canvas = document.getElementById('background');
+		var ctx = canvas.getContext('2d');
+		var img = document.createElement('img');
+		img.src = "fish.png";
+		var test;
+		// to rotate fish, use img.rotate(angleInRadians) 
+		// https://stackoverflow.com/questions/3793397/html5-canvas-drawimage-with-at-an-angle
+		ctx.drawImage(img, 100, 100, 840, 230);		
+	}
 }
 
+
 const fishTest = new fish(1, null, 8, 6, null, null, 0); // for testing
-drawFish();
+
 
 // updates coordinate mouse click
 window.addEventListener('click', (event) => {
 	console.log(event.clientX, event.clientY); // for testing
-	const clickX = event.clientX;
-	const clickY = event.clientY;
+	clickX = event.clientX;
+	clickY = event.clientY;
 	fishTest.feedFish();
 })

@@ -22,7 +22,11 @@ DATA STRUCTURE OUTLINE:
 <<<<<<< Updated upstream
 Objects:
 	class fish 
-				class pose(direction, position, speed), 
+				id,
+				direction,
+				x, 
+				y, 
+				speed, 
 				endpoint, 
 				static speed,
 				bool fed?
