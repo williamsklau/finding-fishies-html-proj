@@ -21,7 +21,8 @@ function startGame(){
 			this.state = 0; //0 is unfed, 1 is fed 
 			this.temp_state = 0;
 			this.target_pos = { x:Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x, y:Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y};
-			ctx.fillRect(this.target_pos.x,this.target_pos.y,50,50);
+			//for collision detection 
+			this.isColliding = false;
 			console.log("fish here created");
 			console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
 			console.log(this.current.x,this.current.y);
@@ -47,6 +48,10 @@ function startGame(){
 		}
 	
 		upate(){
+			if(this.isColliding){
+				this.target_pos.x = Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x;
+				this.target_pos.y = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
+			}
 			if(this.current.x_pos!=this.target_pos.x||this.current.y_pos!=this.target_pos.y){
 				this.current.x_pos = this.current.x_pos + this.velocity.x*(this.target_pos.x-this.current.x_pos);
 				this.current.y_pos = this.current.y_pos + this.velocity.y*(this.target_pos.y-this.current.y_pos);
@@ -67,11 +72,47 @@ function startGame(){
 	//const myFish = new fish(100,100,0);
 	let Fishs = []
 	let Totol_Fish = 10 
+
+	//refence to https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
+	function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2){
+		// Check x and y for overlap
+		if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2){
+			return false;
+		}
+		return true;
+	}
+	//refence to https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
+	function detectCollisions(){
+		let obj1;
+		let obj2;
+	
+		// Reset collision state of all objects
+		for (let i = 0; i < Fishs.length; i++) {
+			Fishs[i].isColliding = false;
+		}
+	
+		// Start checking for collisions
+		for (let i = 0; i < Fishs.length; i++)
+		{
+			obj1 = Fishs[i];
+			for (let j = i + 1; j < Fishs.length; j++)
+			{
+				obj2 = Fishs[j];
+	
+				// Compare object1 with object2
+				if (rectIntersect(obj1.current.x_pos, obj1.current.y_pos, obj1.width, obj1.height, obj2.current.x_pos, obj2.current.y_pos, obj2.width, obj2.height)){
+					obj1.isColliding = true;
+					obj2.isColliding = true;
+				}
+			}
+		}
+	}
 	
 	function animate(){
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 		ctx.restore(); 
 		requestAnimationFrame(animate);
+		detectCollisions();
 		for (var i = 0; i < Totol_Fish; i++) {
 			Fishs[i].upate();
 			Fishs[i].draw();
