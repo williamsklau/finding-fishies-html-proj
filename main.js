@@ -51,17 +51,22 @@ function startGame(){
 
 		// feedFish: checks if fish exists where click happens
 		feedFish(){
-			if(clickX == this.current_x && clickY == this.current_y){
+			if(clickX <= (this.current_x+this.width) && 
+					clickX >= (this.current_x-this.width) && 
+					clickY <= (this.current_y+this.height) &&
+					clickY >= (this.current_y-this.height) &&
+					FoodCount > 0
+				){
+
 				this.state++;
-				FoodCount--;
+				if(FoodCount > 0)
+					FoodCount--;
 				// clickY = null;
 				// clickX = null;
 				console.log('fish fed!' + 'Foodcount = ' + FoodCount);
 			}
 			else
-				console.log('no fish here');
-
-			console.log('clickX=' + clickX + ' clickY=' + clickY + 
+				console.log('clickX=' + clickX + ' clickY=' + clickY + 
 						' this.x=' + this.current_x + ' this.y=' + this.current_y);
 	}
 	
