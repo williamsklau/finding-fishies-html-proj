@@ -48,11 +48,31 @@ function startGame(){
 			this.current_y = this.current_y + this.velocity_y;
 			//console.log(this.curr_angle);
 		}
+
+		// feedFish: checks if fish exists where click happens
+		feedFish(){
+			if(clickX == this.current_x && clickY == this.current_y){
+				this.state++;
+				FoodCount--;
+				// clickY = null;
+				// clickX = null;
+				console.log('fish fed!' + 'Foodcount = ' + FoodCount);
+			}
+			else
+				console.log('no fish here');
+
+			console.log('clickX=' + clickX + ' clickY=' + clickY + 
+						' this.x=' + this.current_x + ' this.y=' + this.current_y);
+	}
 	
 	}
 	//const myFish = new fish(100,100,0);
+	//Global Vars
 	let Fishs = []
 	let Totol_Fish = 5 
+	let clickY = 0
+	let clickX = 0
+	let FoodCount = Totol_Fish
 	
 	function animate(){
 		ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -68,7 +88,7 @@ function startGame(){
 	var test;
 	//ctx.drawImage(img, 100, 100, 840, 230);
 	for (var i = 0; i < Totol_Fish; i++) {
-		var x_pos = Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x;
+		var x_pos = Number((Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x));
 		var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
 		var angle = Math.random()*Math.PI;
 		console.log(x_pos,y_pos,angle/Math.PI*180);
@@ -80,4 +100,14 @@ function startGame(){
 	// morefish.draw();
 	//myFish.draw();
 	animate();
+
+	// updates coordinate mouse click
+	window.addEventListener('click', (event) => {
+		console.log('CLICK!'); // for testing
+		clickX = event.clientX;
+		clickY = event.clientY;
+
+		for(var i = 0; i < Totol_Fish; i++)
+				Fishs[i].feedFish();
+	})
 }
