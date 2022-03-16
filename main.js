@@ -39,7 +39,7 @@ function startGame(){
 		upate(){
 
 			this.velocity.x = this.velocity_base.x*(this.target_pos.x-this.current.x_pos);
-			this.velocity.y = this.velocity_base.y*(this.target_pos.y-this.current.y_pos)
+			this.velocity.y = this.velocity_base.y*(this.target_pos.y-this.current.y_pos);
 			// if(this.isColliding){
 			// 	this.target_pos.x = Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x;
 			// 	this.target_pos.y = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
