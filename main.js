@@ -120,7 +120,7 @@ function startGame(){
 					obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*100;
 					obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*100;
 					obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*100;
-					console.log = ("here look");
+					//console.log = ("here look");
 				}
 			}
 
