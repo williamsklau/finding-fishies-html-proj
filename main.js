@@ -2,6 +2,11 @@ function startGame(){
 	let canvas = document.getElementById('background');
 	let ctx = canvas.getContext('2d');
 	var img = document.createElement('img');
+	//const myFish = new fish(100,100,0);
+	let Fishs = []
+	let Total_Fish = 10
+	let FoodCount = Total_Fish;
+	let fishColor = 'darkblue'
 	img.src = "fish.png";
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
@@ -11,8 +16,9 @@ function startGame(){
 	canvas.min_y = canvas.height*0.1;
 	
 	class fish{
-		constructor(x,y,r){
-			this.radis = r;
+		constructor(id,x,y,r){
+			this.id = id;
+			this.radius = r;
 			this.velocity = {x:0.01,y:0.01};
 			this.velocity_base = {x:0.01,y:0.01};
 			this.current = {x_pos:x, y_pos:y};
@@ -20,23 +26,59 @@ function startGame(){
 			this.temp_state = 0;
 			this.isColliding = 0;
 			this.target_pos = { x:Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x, y:Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y};
-			console.log("fish here created");
-			console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
-			console.log(this.current.x,this.current.y);
-			console.log(this.target_pos.x,this.target_pos.y);
+			// console.log("ID" + this.id + " created here");
+			// console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
+			// console.log(this.current.x,this.current.y);
+			// console.log(this.target_pos.x,this.target_pos.y);
 		}
 		
 		draw(){
 			//console.log("draw fish pls");
 			ctx.beginPath();
-			ctx.arc(this.current.x_pos,this.current.y_pos,this.radis,0,Math.PI*2,false);
-			ctx.fillStyle = 'blue';
+			ctx.arc(this.current.x_pos,this.current.y_pos,this.radius,0,Math.PI*2,false);
+			ctx.fillStyle = fishColor;
 			ctx.fill();
 			//ctx.fillRect(this.current.x_pos-this.width/2,this.current.y_pos-this.height/2,this.width,this.height);
 			//console.log(this.current_x,this.current_y)
+
+			// Draw fins
+			// calculate base coord
+			var angle = Math.atan2((this.target_pos.y - this.current.y_pos), (this.target_pos.x - this.current.x_pos));
+			if(angle < 0)	// convert -180<->0 to 180<->360 degrees
+				angle += 2*Math.PI;
+
+			//var baseX = this.current.x_pos - this.radis + (-this.radius/2) * Math.cos(angle) - (0) * Math.sin(angle);
+			//var baseY = this.current.y_pos + (this.radius/2) * Math.sin(angle) + 0 * Math.cos(angle);
+			var baseX = -this.radius * Math.cos(angle) + this.current.x_pos;
+			var baseY = -this.radius * Math.sin(angle) + this.current.y_pos;
+
+			// calculate fin1 coord
+			// var fin1_angle = angle - 0.05;
+			var fin1X = -this.radius * (2*Math.cos(angle) - Math.sin(angle)) + this.current.x_pos;
+			var fin1Y = -this.radius * (2*Math.sin(angle) + Math.cos(angle)) + this.current.y_pos;
+
+			// calculate fin2 coord
+			var fin2X = -this.radius * (2*Math.cos(angle) + Math.sin(angle)) + this.current.x_pos;
+			var fin2Y = -this.radius * (2*Math.sin(angle) - Math.cos(angle)) + this.current.y_pos;
+			
+			// draw fins
+			ctx.strokeStyle = fishColor;
+			ctx.lineWidth = 5;
+			ctx.beginPath();
+			ctx.moveTo(fin1X, fin1Y);
+			ctx.lineTo(baseX, baseY);
+			ctx.lineTo(fin2X, fin2Y);
+			ctx.stroke();
+			
+			// Print coord besides fishes (for testing)
+			ctx.fillText('ID:'+this.id + ' angle:'+ Math.round(angle * 180/Math.PI), this.current.x_pos+40, this.current.y_pos-20);
+			ctx.fillText(' current:'+ Math.round(this.current.x_pos)+", "+ Math.round(this.current.y_pos), this.current.x_pos+40, this.current.y_pos-10);
+			ctx.fillText(' base:'+ Math.round(baseX)+", "+ Math.round(baseY), this.current.x_pos+40, this.current.y_pos);
+			ctx.fillText(' fin1:'+ Math.round(fin1X)+", "+ Math.round(fin1Y), this.current.x_pos+40, this.current.y_pos+10);
+			ctx.fillText(' fin2:'+ Math.round(fin2X)+", "+ Math.round(fin2Y), this.current.x_pos+40, this.current.y_pos+20);
 		}
 	
-		upate(){
+		update(){
 
 			this.velocity.x = this.velocity_base.x*(this.target_pos.x-this.current.x_pos);
 			this.velocity.y = this.velocity_base.y*(this.target_pos.y-this.current.y_pos);
@@ -45,14 +87,14 @@ function startGame(){
 			// 	this.target_pos.y = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
 			// }
 			if(this.target_pos.x>canvas.width){
-				this.target_pos.x = canvas.width-this.radis*2;
+				this.target_pos.x = canvas.width-this.radius*2;
 			}else if(this.target_pos.x<0){
-				this.target_pos.x = this.radis*2;
+				this.target_pos.x = this.radius*2;
 			}
 			if(this.target_pos.y>canvas.height){
-				this.target_pos.y = canvas.height - this.radis*2;
+				this.target_pos.y = canvas.height - this.radius*2;
 			}else if(this.target_pos.y<0){
-				this.target_pos.y = this.radis*2;
+				this.target_pos.y = this.radius*2;
 			}
 			if(this.current.x_pos!=this.target_pos.x||this.current.y_pos!=this.target_pos.y){
 				// this.current.x_pos = this.current.x_pos + this.velocity.x*(this.target_pos.x-this.current.x_pos);
@@ -71,11 +113,28 @@ function startGame(){
 			//if(this.current_x!=this.target_pos.x)
 			//console.log(this.curr_angle);
 		}
+
+		// feedFish: checks if fish exists where click happens
+		feedFish(){
+			if(clickX <= (this.current.x_pos+this.radius) && 
+					clickX >= (this.current.x_pos-this.radius) && 
+					clickY <= (this.current.y_pos+this.radius) &&
+					clickY >= (this.current.y_pos-this.radius) &&
+					FoodCount > 0
+				)
+			{
+				this.state++;
+				if(FoodCount > 0)
+					FoodCount--;
+				// clickY = null;
+				// clickX = null;
+				// console.log('fish ' + this.id + ' fed at ' + clickX + ', ' + clickY + '. Foodcount = ' + FoodCount);
+			}
+			// else
+			// 	console.log('Fish'+this.id+' clickX=' + clickX + ' clickY=' + clickY + ' FishX=' + this.current.x_pos + ' FishY=' + this.current.y_pos);
+		}
 	
 	}
-	//const myFish = new fish(100,100,0);
-	let Fishs = []
-	let Totol_Fish = 10 
 
 	//refence to https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
 	function circleIntersect(x1, y1, r1, x2, y2, r2) {
@@ -104,7 +163,7 @@ function startGame(){
 			for (let j = i + 1; j < Fishs.length; j++){
 				obj2 = Fishs[j];
 				// Compare object1 with object2
-				if (circleIntersect(obj1.current.x_pos, obj1.current.y_pos, obj1.radis, obj2.current.x_pos, obj2.current.y_pos, obj2.radis)){
+				if (circleIntersect(obj1.current.x_pos, obj1.current.y_pos, obj1.radius, obj2.current.x_pos, obj2.current.y_pos, obj2.radius)){
 					obj1.isColliding = true;
 					obj2.isColliding = true;
 					// let vCollision = {x: obj2.current.x_pos - obj1.current.x_pos, y: obj2.current.y_pos - obj1.current.y_pos};
@@ -132,8 +191,8 @@ function startGame(){
 		ctx.restore(); 
 		requestAnimationFrame(animate);
 		detectCollisions();
-		for (var i = 0; i < Totol_Fish; i++) {
-			Fishs[i].upate();
+		for (var i = 0; i < Total_Fish; i++) {
+			Fishs[i].update();
 			Fishs[i].draw();
 
 			//console.log(Fishs[i].current);
@@ -143,12 +202,15 @@ function startGame(){
 	}
 	var test;
 	//ctx.drawImage(img, 100, 100, 840, 230);
-	for (var i = 0; i < Totol_Fish; i++) {
-		var x_pos = Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x;
+	for (var i = 0; i < Total_Fish; i++) {
+		// var x_pos = Math.random()*(((canvas.max_x - canvas.min_x)/Total_Fish + canvas.min_x) - canvas.min_x * i)+canvas.min_x * i;
+		var x_pos = Math.random()*((canvas.max_x/Total_Fish + canvas.min_x) - canvas.min_x * i)+canvas.min_x * i;
 		var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
+		
+
 		var r = Math.random()*10+10;
-		//console.log(x_pos,y_pos,r);
-		const myFish = new fish(x_pos,y_pos,20);
+		console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
+		const myFish = new fish(i,x_pos,y_pos,20);
 		Fishs.push(myFish);
 		//myFish.draw();
 	}
@@ -156,4 +218,16 @@ function startGame(){
 	// morefish.draw();
 	//myFish.draw();
 	animate();
+
+	// Event checks coord of mouse click
+	window.addEventListener('click', (event) => {
+		// console.log('CLICK!'); // for testing
+		
+		// calibrate click to canvas top-left corner and store values
+		clickX = event.clientX-10;
+		clickY = event.clientY-104;
+
+		for(var i = 0; i < Total_Fish; i++)
+				Fishs[i].feedFish();
+	})
 }
