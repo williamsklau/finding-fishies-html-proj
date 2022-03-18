@@ -73,9 +73,8 @@ function startGame(){
 			// Print coord besides fishes (for testing)
 			ctx.fillText('ID:'+this.id + ' angle:'+ Math.round(angle * 180/Math.PI), this.current.x_pos+40, this.current.y_pos-20);
 			ctx.fillText(' current:'+ Math.round(this.current.x_pos)+", "+ Math.round(this.current.y_pos), this.current.x_pos+40, this.current.y_pos-10);
-			ctx.fillText(' base:'+ Math.round(baseX)+", "+ Math.round(baseY), this.current.x_pos+40, this.current.y_pos);
-			ctx.fillText(' fin1:'+ Math.round(fin1X)+", "+ Math.round(fin1Y), this.current.x_pos+40, this.current.y_pos+10);
-			ctx.fillText(' fin2:'+ Math.round(fin2X)+", "+ Math.round(fin2Y), this.current.x_pos+40, this.current.y_pos+20);
+			ctx.fillText(' Fed?:'+ this.state, this.current.x_pos+40, this.current.y_pos);
+			
 		}
 	
 		update(){
@@ -203,11 +202,11 @@ function startGame(){
 	var test;
 	//ctx.drawImage(img, 100, 100, 840, 230);
 	for (var i = 0; i < Total_Fish; i++) {
-		// var x_pos = Math.random()*(((canvas.max_x - canvas.min_x)/Total_Fish + canvas.min_x) - canvas.min_x * i)+canvas.min_x * i;
-		var x_pos = Math.random()*((canvas.max_x/Total_Fish + canvas.min_x) - canvas.min_x * i)+canvas.min_x * i;
+		// Spawn fish into its own designated range of X-axis
+		var spawn_width = (canvas.max_x - canvas.min_x) / Total_Fish;
+		var x_pos = (spawn_width*(i+1)-spawn_width*i)+(spawn_width*i);	
 		var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
 		
-
 		var r = Math.random()*10+10;
 		console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
 		const myFish = new fish(i,x_pos,y_pos,20);
@@ -221,11 +220,13 @@ function startGame(){
 
 	// Event checks coord of mouse click
 	window.addEventListener('click', (event) => {
-		// console.log('CLICK!'); // for testing
-		
+
 		// calibrate click to canvas top-left corner and store values
 		clickX = event.clientX-10;
 		clickY = event.clientY-104;
+		
+		console.log('CLICK!'); // for testing
+		console.log('at ' + clickX + " , " + clickY);
 
 		for(var i = 0; i < Total_Fish; i++)
 				Fishs[i].feedFish();
