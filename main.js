@@ -3,8 +3,8 @@ function startGame(){
 	let ctx = canvas.getContext('2d');
 	var img = document.createElement('img');
 	//const myFish = new fish(100,100,0);
-	let Fishs = []
-	let Total_Fish = 10
+	let Fishs = [];
+	let Total_Fish = 5;
 	let FoodCount = Total_Fish;
 	let fishColor = 'darkblue'
 	img.src = "fish.png";
@@ -14,13 +14,14 @@ function startGame(){
 	canvas.min_x = canvas.width*0.1;
 	canvas.max_y = canvas.height*0.8;
 	canvas.min_y = canvas.height*0.1;
+	let score = 0;
 	
 	class fish{
 		constructor(id,x,y,r){
 			this.id = id;
 			this.radius = r;
 			this.velocity = {x:0.01,y:0.01};
-			this.velocity_base = {x:0.0001,y:0.0001};
+			this.velocity_base = {x:0.004,y:0.005};
 			this.current = {x_pos:x, y_pos:y};
 			this.state = 0; //0 is unfed, 1 is fed 
 			this.temp_state = 0;
@@ -74,6 +75,7 @@ function startGame(){
 			ctx.fillText('ID:'+this.id + ' angle:'+ Math.round(angle * 180/Math.PI), this.current.x_pos+40, this.current.y_pos-20);
 			ctx.fillText(' current:'+ Math.round(this.current.x_pos)+", "+ Math.round(this.current.y_pos), this.current.x_pos+40, this.current.y_pos-10);
 			ctx.fillText(' Fed?:'+ this.state, this.current.x_pos+40, this.current.y_pos);
+			ctx.fillText(' tartget:'+ Math.round(this.target_pos.x)+", "+ Math.round(this.target_pos.y), this.current.x_pos+40, this.current.y_pos+10);
 			
 		
 		}
@@ -111,7 +113,7 @@ function startGame(){
 				this.target_pos.y = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
 			}
 			//if(this.current_x!=this.target_pos.x)
-			//console.log(this.curr_angle);
+			//console.log((1/obj1.velocity_base*10));
 		}
 
 		// feedFish: checks if fish exists where click happens
@@ -166,24 +168,29 @@ function startGame(){
 				if (circleIntersect(obj1.current.x_pos, obj1.current.y_pos, obj1.radius, obj2.current.x_pos, obj2.current.y_pos, obj2.radius)){
 					obj1.isColliding = true;
 					obj2.isColliding = true;
-					// let vCollision = {x: obj2.current.x_pos - obj1.current.x_pos, y: obj2.current.y_pos - obj1.current.y_pos};
-					// let distance = Math.sqrt((obj2.current.x_pos-obj1.current.x_pos)*(obj2.current.x_pos-obj1.current.x_pos) + (obj2.current.y_pos-obj1.current.y_pos)*(obj2.current.y_pos-obj1.current.y_pos));
-					// let vCollisionNorm = {x: vCollision.x / distance, y: vCollision.y / distance};
-					// let vRelativeVelocity = {x: obj1.velocity.x - obj2.velocity.x, y: obj1.velocity.y - obj2.velocity.y};
-					// let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
-					// obj1.velocity.x -= (speed * vCollisionNorm.x);
-					// obj1.velocity.y -= (speed * vCollisionNorm.y);
-					// obj2.velocity.x += (speed * vCollisionNorm.x);
-					// obj2.velocity.y += (speed * vCollisionNorm.y);
-					obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*100;
-					obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*100;
-					obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*100;
-					obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*100;
+					// obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*(1/obj1.velocity_base.x*10);
+					// obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*(1/obj1.velocity_base.y*10);
+					// obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*(1/obj2.velocity_base.x*10);
+					// obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*(1/obj2.velocity_base.y*10);
+					obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*1000;
+					obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*1000;
+					obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*1000;
+					obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*1000;
 					//console.log = ("here look");
 				}
 			}
 
 		}
+	}
+
+	function score_counter(){
+		let fish_feed = 0;
+		for (var i = 0;i<Fishs.length;i++){
+			if(Fishs[i].state){
+				fish_feed++;
+			}
+		}
+		score = fish_feed*10;
 	}
 	
 	function animate(){
@@ -197,10 +204,11 @@ function startGame(){
 
 			//console.log(Fishs[i].current);
 		}
-
+		score_counter();
+		ctx.fillText(' score?:'+ score, 40, 10);
 		//console.log(canvas.width,canvas.height);
 	}
-	var test;
+
 	//ctx.drawImage(img, 100, 100, 840, 230);
 	for (var i = 0; i < Total_Fish; i++) {
 		// Spawn fish into its own designated range of X-axis
