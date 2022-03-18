@@ -20,7 +20,7 @@ function startGame(){
 			this.id = id;
 			this.radius = r;
 			this.velocity = {x:0.01,y:0.01};
-			this.velocity_base = {x:0.01,y:0.01};
+			this.velocity_base = {x:0.0001,y:0.0001};
 			this.current = {x_pos:x, y_pos:y};
 			this.state = 0; //0 is unfed, 1 is fed 
 			this.temp_state = 0;
@@ -75,6 +75,7 @@ function startGame(){
 			ctx.fillText(' current:'+ Math.round(this.current.x_pos)+", "+ Math.round(this.current.y_pos), this.current.x_pos+40, this.current.y_pos-10);
 			ctx.fillText(' Fed?:'+ this.state, this.current.x_pos+40, this.current.y_pos);
 			
+		
 		}
 	
 		update(){
@@ -127,10 +128,10 @@ function startGame(){
 					FoodCount--;
 				// clickY = null;
 				// clickX = null;
-				// console.log('fish ' + this.id + ' fed at ' + clickX + ', ' + clickY + '. Foodcount = ' + FoodCount);
+				console.log('fish ' + this.id + ' fed at ' + clickX + ', ' + clickY + '. Foodcount = ' + FoodCount);
 			}
 			// else
-			// 	console.log('Fish'+this.id+' clickX=' + clickX + ' clickY=' + clickY + ' FishX=' + this.current.x_pos + ' FishY=' + this.current.y_pos);
+				console.log('ID: '+this.id+' clickX=' + clickX + ' clickY=' + clickY + ' FishX=' + this.current.x_pos + ' FishY=' + this.current.y_pos);
 		}
 	
 	}
@@ -221,12 +222,12 @@ function startGame(){
 	// Event checks coord of mouse click
 	window.addEventListener('click', (event) => {
 
-		// calibrate click to canvas top-left corner and store values
-		clickX = event.clientX-10;
-		clickY = event.clientY-104;
+		// calibrate click from page to canvas and store values
+		var rect = canvas.getBoundingClientRect();
+		clickX = event.clientX - rect.left;
+		clickY = event.clientY - rect.top;
 		
 		console.log('CLICK!'); // for testing
-		console.log('at ' + clickX + " , " + clickY);
 
 		for(var i = 0; i < Total_Fish; i++)
 				Fishs[i].feedFish();
