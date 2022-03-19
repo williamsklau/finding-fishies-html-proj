@@ -6,7 +6,7 @@ function startGame(){
 	let Fishs = [];
 	let Total_Fish = 5;
 	let FoodCount = Total_Fish;
-	let fishColor = 'darkblue'
+	let fishColor = 'darkblue';
 	img.src = "fish.png";
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
@@ -14,7 +14,9 @@ function startGame(){
 	canvas.min_x = canvas.width*0.1;
 	canvas.max_y = canvas.height*0.8;
 	canvas.min_y = canvas.height*0.1;
-	let score = 0;
+	let score ={current_level:0,accum:0,display:0};
+	let animateID;
+	let fish_feed = 0;
 	
 	class fish{
 		constructor(id,x,y,r){
@@ -183,20 +185,34 @@ function startGame(){
 		}
 	}
 
-	function score_counter(){
-		let fish_feed = 0;
+	function score_update(){
+		fish_feed = 0;
 		for (var i = 0;i<Fishs.length;i++){
 			if(Fishs[i].state){
 				fish_feed++;
 			}
 		}
-		score = fish_feed*10;
 	}
 	
+	function draw_all_fish(){
+		for (var i = 0; i < Total_Fish; i++) {
+			// Spawn fish into its own designated range of X-axis
+			var spawn_width = (canvas.max_x - canvas.min_x) / Total_Fish;
+			var x_pos = (spawn_width*(i+1)-spawn_width*i)+(spawn_width*i);	
+			var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
+			
+			var r = Math.random()*10+10;
+			console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
+			const myFish = new fish(i,x_pos,y_pos,20);
+			Fishs.push(myFish);
+			//myFish.draw();
+		}
+	}
+
 	function animate(){
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 		ctx.restore(); 
-		requestAnimationFrame(animate);
+		animateID = requestAnimationFrame(animate);
 		detectCollisions();
 		for (var i = 0; i < Total_Fish; i++) {
 			Fishs[i].update();
@@ -204,27 +220,35 @@ function startGame(){
 
 			//console.log(Fishs[i].current);
 		}
-		score_counter();
-		ctx.fillText(' score?:'+ score, 40, 10);
-		//console.log(canvas.width,canvas.height);
+		score_update();
+		score.current_level = fish_feed*10;
+		score.display = score.current_level+score.accum;
+		ctx.fillText(' score:'+ score.display, 40, 10);
+
+		//end game
+		if(FoodCount==0&&fish_feed!=Total_Fish){
+			cancelAnimationFrame(animateID); 
+			console.log('end game');
+		}
+		//move onto next level 
+		else if(FoodCount==0&&fish_feed==Total_Fish){
+			Total_Fish++;
+			score.accum+=score.current_level;
+			score.current_level = 0;
+			FoodCount = Total_Fish;
+			Fishs = [];
+			draw_all_fish();
+			console.log("next level!");
+		}
+
 	}
 
+
 	//ctx.drawImage(img, 100, 100, 840, 230);
-	for (var i = 0; i < Total_Fish; i++) {
-		// Spawn fish into its own designated range of X-axis
-		var spawn_width = (canvas.max_x - canvas.min_x) / Total_Fish;
-		var x_pos = (spawn_width*(i+1)-spawn_width*i)+(spawn_width*i);	
-		var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
-		
-		var r = Math.random()*10+10;
-		console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
-		const myFish = new fish(i,x_pos,y_pos,20);
-		Fishs.push(myFish);
-		//myFish.draw();
-	}
 	// const morefish = new fish(210,100,180/180*Math.PI);
 	// morefish.draw();
 	//myFish.draw();
+	draw_all_fish();
 	animate();
 
 	// Event checks coord of mouse click
