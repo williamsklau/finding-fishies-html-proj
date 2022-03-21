@@ -26,6 +26,5 @@ public class WebAppInterface {
     public void receiveValueFromJs(String str) {
     //do something useful with str
         Toast.makeText(mContext, "Received Value from JS: " + str,Toast.LENGTH_SHORT).show();
-        Toast.makeText(mContext, "Received Value from JS: ",Toast.LENGTH_SHORT).show();
     }
 }
