@@ -3,10 +3,6 @@ function startGame(){
 	var ctx = canvas.getContext('2d');
 	var img = document.createElement('img');
 	img.src = "fish.png";
-<<<<<<< Updated upstream
-	var test;
-	ctx.drawImage(img, 100, 100, 840, 230);
-=======
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight*0.8;
 	canvas.max_x = canvas.width*0.8;
@@ -263,5 +259,4 @@ function startGame(){
 		for(var i = 0; i < Total_Fish; i++)
 				Fishs[i].feedFish();
 	})
->>>>>>> Stashed changes
 }
