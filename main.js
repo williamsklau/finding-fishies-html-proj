@@ -1,7 +1,13 @@
+let score ={current_level:0,accum:9,display:0};
 function startGame(){
-	var canvas = document.getElementById('background');
-	var ctx = canvas.getContext('2d');
+	let canvas = document.getElementById('background');
+	let ctx = canvas.getContext('2d');
 	var img = document.createElement('img');
+	//const myFish = new fish(100,100,0);
+	let Fishs = [];
+	let Total_Fish = 5;
+	let FoodCount = Total_Fish;
+	let fishColor = 'darkblue';
 	img.src = "fish.png";
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight*0.8;
@@ -9,7 +15,7 @@ function startGame(){
 	canvas.min_x = canvas.width*0.1;
 	canvas.max_y = canvas.height*0.8;
 	canvas.min_y = canvas.height*0.1;
-	let score ={current_level:0,accum:0,display:0};
+
 	let animateID;
 	let fish_feed = 0;
 	
@@ -135,6 +141,7 @@ function startGame(){
 	
 	}
 
+
 	//refence to https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
 	function circleIntersect(x1, y1, r1, x2, y2, r2) {
 
@@ -195,7 +202,6 @@ function startGame(){
 			var spawn_width = (canvas.max_x - canvas.min_x) / Total_Fish;
 			var x_pos = (spawn_width*(i+1)-spawn_width*i)+(spawn_width*i);	
 			var y_pos = Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y;
-			
 			var r = 0.05*canvas.width;
 			console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
 			const myFish = new fish(i,x_pos,y_pos,r);
@@ -219,6 +225,8 @@ function startGame(){
 		score.current_level = fish_feed*10;
 		score.display = score.current_level+score.accum;
 		ctx.fillText(' score:'+ score.display, 40, 10);
+
+		//App.receiveValueFromJs(score.display.toString());
 
 		//end game
 		if(FoodCount==0&&fish_feed!=Total_Fish){
@@ -259,4 +267,10 @@ function startGame(){
 		for(var i = 0; i < Total_Fish; i++)
 				Fishs[i].feedFish();
 	})
+}
+
+function sendScore(){
+    App.receiveValueFromJs(score.display.toString());
+    //App.receiveValueFromJs("hiii");
+    score.display += 1;
 }
