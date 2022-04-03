@@ -7,7 +7,8 @@ function startGame(){
 	let Fishs = [];
 	let Total_Fish = 5;
 	let FoodCount = Total_Fish;
-	let fishColor = 'darkblue';
+	let myTime;
+	//let fishColor = '#004e98';
 	img.src = "fish.png";
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight*0.8;
@@ -18,6 +19,7 @@ function startGame(){
 
 	let animateID;
 	let fish_feed = 0;
+	let start_count = 8;
 	
 	class fish{
 		constructor(id,x,y,r){
@@ -30,6 +32,8 @@ function startGame(){
 			this.temp_state = 0;
 			this.isColliding = 0;
 			this.target_pos = { x:Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x, y:Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y};
+			this.fishColor = '#004e98';
+			this.count = start_count;
 			// console.log("ID" + this.id + " created here");
 			// console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
 			// console.log(this.current.x,this.current.y);
@@ -40,7 +44,7 @@ function startGame(){
 			//console.log("draw fish pls");
 			ctx.beginPath();
 			ctx.arc(this.current.x_pos,this.current.y_pos,this.radius,0,Math.PI*2,false);
-			ctx.fillStyle = fishColor;
+			ctx.fillStyle = this.fishColor;
 			ctx.fill();
 			//ctx.fillRect(this.current.x_pos-this.width/2,this.current.y_pos-this.height/2,this.width,this.height);
 			//console.log(this.current_x,this.current_y)
@@ -66,7 +70,7 @@ function startGame(){
 			var fin2Y = -this.radius * (2*Math.sin(angle) - Math.cos(angle)) + this.current.y_pos;
 			
 			// draw fins
-			ctx.strokeStyle = fishColor;
+			ctx.strokeStyle = this.fishColor;
 			ctx.lineWidth = 5;
 			ctx.beginPath();
 			ctx.moveTo(fin1X, fin1Y);
@@ -117,7 +121,16 @@ function startGame(){
 			}
 			//if(this.current_x!=this.target_pos.x)
 			//console.log((1/obj1.velocity_base*10));
+
+			if(this.count>0 && this.count<start_count){
+				this.fishColor = 'red';
+			}else if(this.count>500){
+				this.count = start_count;
+			}else{
+				this.fishColor = '#004e98';
+			}
 		}
+
 
 		// feedFish: checks if fish exists where click happens
 		feedFish(){
@@ -134,11 +147,19 @@ function startGame(){
 				// clickY = null;
 				// clickX = null;
 				console.log('fish ' + this.id + ' fed at ' + clickX + ', ' + clickY + '. Foodcount = ' + FoodCount);
+				this.count = start_count - 1;
 			}
 			// else
 				console.log('ID: '+this.id+' clickX=' + clickX + ' clickY=' + clickY + ' FishX=' + this.current.x_pos + ' FishY=' + this.current.y_pos);
 		}
 	
+	}
+	function myTimer() {
+		for (var i = 0; i < Total_Fish; i++) {
+		    if(Fishs[i].count<start_count){
+		        Fishs[i].count =Fishs[i].count + 1;
+		    } 
+		}
 	}
 
 
@@ -206,6 +227,7 @@ function startGame(){
 			console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
 			const myFish = new fish(i,x_pos,y_pos,r);
 			Fishs.push(myFish);
+			myTime = setInterval(myTimer,1500);
 			//myFish.draw();
 		}
 	}
@@ -232,6 +254,7 @@ function startGame(){
 		if(FoodCount==0&&fish_feed!=Total_Fish){
 			cancelAnimationFrame(animateID); 
 			console.log('end game');
+			clearInterval(myTime);
 		}
 		//move onto next level 
 		else if(FoodCount==0&&fish_feed==Total_Fish){
@@ -274,3 +297,4 @@ function sendScore(){
     //App.receiveValueFromJs("hiii");
     score.display += 1;
 }
+
