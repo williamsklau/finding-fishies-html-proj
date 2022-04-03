@@ -5,7 +5,7 @@ function startGame(){
 	var img = document.createElement('img');
 	//const myFish = new fish(100,100,0);
 	let Fishs = [];
-	let Total_Fish = 5;
+	let Total_Fish = 15;
 	let FoodCount = Total_Fish;
 	let myTime;
 	//let fishColor = '#004e98';
@@ -19,14 +19,15 @@ function startGame(){
 
 	let animateID;
 	let fish_feed = 0;
-	let start_count = 8;
+	let start_count = 20;
+	let collision_cool_down = 20;
 	
 	class fish{
 		constructor(id,x,y,r){
 			this.id = id;
 			this.radius = r;
 			this.velocity = {x:0.01,y:0.01};
-			this.velocity_base = {x:0.004,y:0.005};
+			this.velocity_base = {x:0.008,y:0.005};
 			this.current = {x_pos:x, y_pos:y};
 			this.state = 0; //0 is unfed, 1 is fed 
 			this.temp_state = 0;
@@ -34,6 +35,7 @@ function startGame(){
 			this.target_pos = { x:Math.random()*(canvas.max_x-canvas.min_x)+canvas.min_x, y:Math.random()*(canvas.max_y-canvas.min_y)+canvas.min_y};
 			this.fishColor = '#004e98';
 			this.count = start_count;
+			this.collsion_cout = 0;
 			// console.log("ID" + this.id + " created here");
 			// console.log(this.current.x_pos - this.target_pos.x, this.current.y_pos - this.target_pos.y);
 			// console.log(this.current.x,this.current.y);
@@ -147,19 +149,12 @@ function startGame(){
 				// clickY = null;
 				// clickX = null;
 				console.log('fish ' + this.id + ' fed at ' + clickX + ', ' + clickY + '. Foodcount = ' + FoodCount);
-				this.count = start_count - 1;
+				this.count = 0;
 			}
 			// else
 				console.log('ID: '+this.id+' clickX=' + clickX + ' clickY=' + clickY + ' FishX=' + this.current.x_pos + ' FishY=' + this.current.y_pos);
 		}
 	
-	}
-	function myTimer() {
-		for (var i = 0; i < Total_Fish; i++) {
-		    if(Fishs[i].count<start_count){
-		        Fishs[i].count =Fishs[i].count + 1;
-		    } 
-		}
 	}
 
 
@@ -191,17 +186,49 @@ function startGame(){
 				obj2 = Fishs[j];
 				// Compare object1 with object2
 				if (circleIntersect(obj1.current.x_pos, obj1.current.y_pos, obj1.radius, obj2.current.x_pos, obj2.current.y_pos, obj2.radius)){
-					obj1.isColliding = true;
-					obj2.isColliding = true;
-					// obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*(1/obj1.velocity_base.x*10);
-					// obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*(1/obj1.velocity_base.y*10);
-					// obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*(1/obj2.velocity_base.x*10);
-					// obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*(1/obj2.velocity_base.y*10);
-					obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*1000;
-					obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*1000;
-					obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*1000;
-					obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*1000;
+
+					// let vCollision = {x: obj2.current.x_pos - obj1.current.x_pos, y: obj2.current.y_pos - obj1.current.y_pos};
+					// let distance = Math.sqrt((obj2.current.x_pos-obj1.current.x_pos)*(obj2.current.x_pos-obj1.current.x_pos) + (obj2.current.y_pos-obj1.current.y_pos)*(obj2.current.y_pos-obj1.current.y_pos));
+					// let vCollisionNorm = {x: vCollision.x / distance, y: vCollision.y / distance};
+					// let vRelativeVelocity = {x: obj1.velocity.x - obj2.velocity.x, y: obj1.velocity.y - obj2.velocity.y};
+					// let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
+					// if (speed < 0){
+					// 	break;
+					// }
+					// obj1.velocity.x -= (speed * vCollisionNorm.x);
+					// obj1.velocity.y -= (speed * vCollisionNorm.y);
+					// obj2.velocity.x += (speed * vCollisionNorm.x);
+					// obj2.velocity.y += (speed * vCollisionNorm.y);
+					// obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*200;
+					// obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*200;
+					// obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*200;
+					// obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*200;
+					//if(obj1.collsion_cout>collision_cool_down&&obj2.collsion_cout>collision_cool_down){
+						// if(Math.round(Math.random())){
+						// 	obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*1000;
+						// 	obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*1000;
+						// }else{
+						// 	obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*1000;
+						// 	obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*1000;
+						// }					
+
+						obj1.target_pos.x = obj1.current.x_pos -obj1.velocity.x*1000;
+						obj1.target_pos.y = obj1.current.y_pos -obj1.velocity.y*1000;
+
+						obj2.target_pos.x = obj2.current.x_pos -obj2.velocity.x*1000/2;
+						obj2.target_pos.y = obj2.current.y_pos -obj2.velocity.y*1000/2;
+					
+						obj1.isColliding = true;
+						obj2.isColliding = true;
+						obj1.collsion_cout = 0;
+						obj2.collsion_cout = 0;
+					//}
+
+
+
 					//console.log = ("here look");
+				}else{
+
 				}
 			}
 
@@ -227,7 +254,6 @@ function startGame(){
 			console.log("ID" + i + " at " + Math.round(x_pos) +" , " + Math.round(y_pos));
 			const myFish = new fish(i,x_pos,y_pos,r);
 			Fishs.push(myFish);
-			myTime = setInterval(myTimer,1500);
 			//myFish.draw();
 		}
 	}
@@ -240,7 +266,12 @@ function startGame(){
 		for (var i = 0; i < Total_Fish; i++) {
 			Fishs[i].update();
 			Fishs[i].draw();
-
+			if(Fishs[i].collsion_cout<=collision_cool_down){
+				Fishs[i].collsion_cout = Fishs[i].collsion_cout + 1;
+			}
+			if(Fishs[i].count<start_count){
+		        Fishs[i].count =Fishs[i].count + 1;
+		    } 
 			//console.log(Fishs[i].current);
 		}
 		score_update();
